@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block title %}Lawyer Review - Case #{{ case.id }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">
+        <i class="bi bi-file-earmark-check"></i> Lawyer Review
+        <span class="badge bg-warning">Pending Review</span>
+    </h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Case Details</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Case ID:</th>
+                            <td>#{{ case.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Service:</th>
+                            <td>{{ case.service_id.replace('_', ' ').title() }}</td>
+                        </tr>
+                        <tr>
+                            <th>Client:</th>
+                            <td>{{ case.user.username }} ({{ case.user.email }})</td>
+                        </tr>
+                        <tr>
+                            <th>Fee:</th>
+                            <td>${{ case.total_price_usdc }} USDC</td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td><span class="badge bg-warning">{{ case.status }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Created:</th>
+                            <td>{{ case.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Submitted Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        {% for key, value in form_data.items() %}
+                        <tr>
+                            <th style="width: 40%;">{{ key.replace('_', ' ').title() }}:</th>
+                            <td>{{ value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-check-circle"></i> Approve Case</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('legal.lawyer_approve_case', case_id=case.id) }}">
+                        <div class="mb-3">
+                            <label for="memo" class="form-label">Lawyer's Memo (Optional)</label>
+                            <textarea class="form-control" id="memo" name="memo" rows="3"
+                                      placeholder="Add any notes or modifications for the client..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Approve & Generate Document
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <p class="small mb-0">
+                        <strong>Next Steps:</strong> Upon approval, the AI will generate the legal document
+                        from the approved template, upload it to the client's secure locker, and notify the client.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-robot"></i> AI-Assisted Review</h6>
+                </div>
+                <div class="card-body">
+                    <p class="small">
+                        This case has been pre-validated by our AI agent. All required fields are present
+                        and comply with state filing requirements.
+                    </p>
+                    <div class="alert alert-success p-2 small mb-0">
+                        <i class="bi bi-check-circle"></i> <strong>Validation Passed</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-cash-stack"></i> Payment Status</h6>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-2"><strong>Payment Received:</strong> ✅</p>
+                    <p class="small mb-2"><strong>In Escrow:</strong> ${{ case.total_price_usdc }} USDC</p>
+                    <p class="small mb-0"><strong>Challenge ID:</strong><br>
+                        <code class="small">{{ case.payment_challenge_id }}</code>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

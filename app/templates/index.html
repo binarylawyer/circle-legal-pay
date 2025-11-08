@@ -1,0 +1,169 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero">
+    <div class="container text-center">
+        <h1 class="display-3 fw-bold mb-3">
+            <i class="bi bi-robot"></i> Agent-Ledger
+        </h1>
+        <p class="lead mb-4">
+            The First AI-Powered, Ethically-Compliant Legal Platform<br>
+            Built on USDC-Native Arc Blockchain
+        </p>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('legal.order_form') }}" class="btn btn-light btn-lg me-2">
+                <i class="bi bi-file-earmark-plus"></i> Order Legal Service
+            </a>
+            <a href="{{ url_for('legal.my_cases') }}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-briefcase"></i> View My Cases
+            </a>
+        {% else %}
+            <a href="{{ url_for('main.register') }}" class="btn btn-light btn-lg me-2">
+                Get Started
+            </a>
+            <a href="{{ url_for('main.login') }}" class="btn btn-outline-light btn-lg">
+                Login
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container my-5">
+    <!-- The Problem -->
+    <div class="row mb-5">
+        <div class="col-md-12 text-center">
+            <h2 class="mb-4">The Problem We Solve</h2>
+            <p class="lead">
+                The $1 trillion legal industry is locked out of the Web3 economy because
+                paying with crypto triggers complex ethical rules (NYSBA Rule 1.8(a)) due to <strong>volatility</strong>.
+            </p>
+        </div>
+    </div>
+
+    <!-- The Solution -->
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-6">
+            <h2>Our Solution</h2>
+            <p class="lead">
+                We remove volatility from the <em>entire</em> payment stack:
+            </p>
+            <ul class="list-unstyled">
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> <strong>USDC Payment:</strong> 1:1 USD-backed stablecoin</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> <strong>USDC Gas:</strong> Arc uses USDC as native gas token</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> <strong>Circle Paymaster:</strong> Gasless client experience</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> <strong>AI Automation:</strong> Deterministic legal document generation</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Ethical Compliance by Design</h5>
+                    <p>
+                        Because 100% of the transaction is dollar-denominated (payment + gas),
+                        we eliminate the "differing interest" that triggers Rule 1.8(a).
+                    </p>
+                    <p class="mb-0">
+                        <strong>Result:</strong> The first compliant on-chain payment rail for legal services.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Services -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h2 class="text-center mb-4">Available Legal Services</h2>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4><i class="bi bi-shield-check"></i> Wyoming DAO LLC</h4>
+                    <p class="text-muted">$1,000 USDC</p>
+                    <p>
+                        Formation of a Wyoming Decentralized Autonomous Organization (DAO) LLC
+                        with on-chain governance recognition.
+                    </p>
+                    <ul class="small">
+                        <li>Compliant with W.S. 17-31-101</li>
+                        <li>Smart contract integration</li>
+                        <li>Annual compliance: $300/year</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4><i class="bi bi-building"></i> Delaware LLC</h4>
+                    <p class="text-muted">$150 USDC</p>
+                    <p>
+                        Formation of a Delaware Limited Liability Company,
+                        the gold standard for US entities.
+                    </p>
+                    <ul class="small">
+                        <li>Certificate of Formation</li>
+                        <li>Registered agent included</li>
+                        <li>Annual franchise tax: $300/year</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4><i class="bi bi-file-lock"></i> UCC-1 Filing</h4>
+                    <p class="text-muted">$100 USDC</p>
+                    <p>
+                        UCC-1 Financing Statement for secured transactions
+                        and perfecting security interests.
+                    </p>
+                    <ul class="small">
+                        <li>Uniform Commercial Code Article 9</li>
+                        <li>Perfects security interest</li>
+                        <li>5-year validity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h2 class="text-center mb-4">How It Works (A-to-Z Flow)</h2>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <ol class="lead">
+                        <li><strong>Order:</strong> Client submits form or uses voice ("I need a Wyoming DAO")</li>
+                        <li><strong>Payment:</strong> Client pays in USDC, funds move to escrow (gasless via Paymaster)</li>
+                        <li><strong>Review:</strong> Human lawyer reviews AI-generated draft</li>
+                        <li><strong>Approve:</strong> Lawyer approves with voice or click</li>
+                        <li><strong>Document:</strong> AI generates deterministic legal document from template</li>
+                        <li><strong>Deliver:</strong> Document uploaded to secure client locker</li>
+                        <li><strong>Client Review:</strong> Client reviews and approves final document</li>
+                        <li><strong>Payment Release:</strong> USDC released from escrow to law firm (on Arc)</li>
+                        <li><strong>Recurring:</strong> Annual fees scheduled automatically (if applicable)</li>
+                        <li><strong>Complete:</strong> Case finalized, document is yours</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="row">
+        <div class="col-md-12 text-center">
+            {% if not current_user.is_authenticated %}
+                <h3 class="mb-3">Ready to Get Started?</h3>
+                <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg">
+                    Create Account
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

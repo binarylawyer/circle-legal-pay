@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">About Agent-Ledger</h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3>Built for the "AI Agents on Arc with USDC" Hackathon</h3>
+            <p class="lead">
+                Agent-Ledger is a proof-of-concept platform demonstrating how AI agents,
+                stablecoins, and blockchain technology can transform legal services.
+            </p>
+        </div>
+    </div>
+
+    <h3>Technology Stack</h3>
+    <ul>
+        <li><strong>Arc Blockchain:</strong> USDC as native gas token</li>
+        <li><strong>Circle WaaS:</strong> Developer-controlled wallets + Gas Station</li>
+        <li><strong>ElevenLabs:</strong> Speech-to-Text for voice interface</li>
+        <li><strong>Google Gemini:</strong> AI-powered intent extraction</li>
+        <li><strong>Python Flask:</strong> Backend framework</li>
+        <li><strong>SQLAlchemy:</strong> Database ORM</li>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block title %}Payment - Case #{{ case.id }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-credit-card"></i> Payment</h4>
+                </div>
+                <div class="card-body">
+                    <h5>Case #{{ case.id }}: {{ case.service_id.replace('_', ' ').title() }}</h5>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Gasless Payment:</strong> Your transaction will be sponsored by Circle Paymaster.
+                        You only pay the service fee - no gas fees!
+                    </div>
+
+                    <table class="table">
+                        <tr>
+                            <th>Service Fee:</th>
+                            <td class="text-end">${{ case.total_price_usdc }} USDC</td>
+                        </tr>
+                        <tr>
+                            <th>Gas Fee:</th>
+                            <td class="text-end"><span class="text-success">$0.00 (Sponsored)</span></td>
+                        </tr>
+                        <tr class="table-active">
+                            <th>Total:</th>
+                            <th class="text-end h5">${{ case.total_price_usdc }} USDC</th>
+                        </tr>
+                    </table>
+
+                    {% if case.recurring_fee_usdc != "0.00" %}
+                    <div class="alert alert-warning">
+                        <strong>Recurring Fee:</strong> This service includes an annual maintenance fee of
+                        ${{ case.recurring_fee_usdc }} USDC, which will be automatically scheduled.
+                    </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Pay ${{ case.total_price_usdc }} USDC
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <h6>Payment Flow:</h6>
+                    <ol class="small">
+                        <li>Funds transferred to escrow wallet</li>
+                        <li>Lawyer reviews your request</li>
+                        <li>Upon approval, funds released to law firm</li>
+                        <li>You receive your legal document</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6><i class="bi bi-shield-check"></i> Powered by Arc + Circle</h6>
+                    <ul class="small mb-0">
+                        <li><strong>Arc Blockchain:</strong> Sub-second finality</li>
+                        <li><strong>USDC Native Gas:</strong> No volatility, predictable fees</li>
+                        <li><strong>Circle Paymaster:</strong> Developer-sponsored gas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
