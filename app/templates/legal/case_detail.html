@@ -1,0 +1,169 @@
+{% extends "layout.html" %}
+
+{% block title %}Case #{{ case.id }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="bi bi-file-earmark-text"></i> Case #{{ case.id }}
+        </h1>
+        <a href="{{ url_for('legal.my_cases') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Cases
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Case Overview -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Case Overview</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th style="width: 30%;">Case ID:</th>
+                            <td><strong>#{{ case.id }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Service:</th>
+                            <td>{{ case.service_id.replace('_', ' ').title() }}</td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td>
+                                {% if case.status == 'COMPLETE' %}
+                                    <span class="badge bg-success">{{ case.status }}</span>
+                                {% elif case.status == 'PENDING_APPROVAL' %}
+                                    <span class="badge bg-primary">{{ case.status }}</span>
+                                {% elif case.status == 'PENDING_REVIEW' %}
+                                    <span class="badge bg-warning">{{ case.status }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ case.status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Client:</th>
+                            <td>{{ case.user.username }} ({{ case.user.email }})</td>
+                        </tr>
+                        <tr>
+                            <th>Created:</th>
+                            <td>{{ case.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Last Updated:</th>
+                            <td>{{ case.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Submitted Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Submitted Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        {% for key, value in form_data.items() %}
+                        <tr>
+                            <th style="width: 40%;">{{ key.replace('_', ' ').title() }}:</th>
+                            <td>{{ value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <!-- Document & Lawyer Notes -->
+            {% if case.status in ['PENDING_APPROVAL', 'COMPLETE'] %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-pdf"></i> Generated Document</h5>
+                </div>
+                <div class="card-body">
+                    {% if case.document_url or case.generated_document_path %}
+                    <p><strong>Document Location:</strong></p>
+                    <div class="alert alert-success">
+                        <code>{{ case.document_url or case.generated_document_path }}</code>
+                    </div>
+                    {% endif %}
+
+                    {% if case.lawyer_memo %}
+                    <p><strong>Lawyer's Notes:</strong></p>
+                    <div class="alert alert-info">
+                        {{ case.lawyer_memo }}
+                    </div>
+                    {% endif %}
+
+                    {% if case.reviewed_at %}
+                    <p class="small text-muted mb-0">
+                        <i class="bi bi-clock"></i> Reviewed on: {{ case.reviewed_at.strftime('%Y-%m-%d %H:%M') }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <!-- Payment Info -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-cash-stack"></i> Payment Details</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm mb-2">
+                        <tr>
+                            <th>Service Fee:</th>
+                            <td class="text-end">${{ case.total_price_usdc }} USDC</td>
+                        </tr>
+                        {% if case.recurring_fee_usdc != "0.00" %}
+                        <tr>
+                            <th>Annual Fee:</th>
+                            <td class="text-end">${{ case.recurring_fee_usdc }} USDC</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+
+                    {% if case.payment_challenge_id %}
+                    <p class="small mb-1"><strong>Payment TX:</strong></p>
+                    <p class="small"><code>{{ case.payment_challenge_id }}</code></p>
+                    {% endif %}
+
+                    {% if case.escrow_challenge_id %}
+                    <p class="small mb-1"><strong>Release TX:</strong></p>
+                    <p class="small"><code>{{ case.escrow_challenge_id }}</code></p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-gear"></i> Actions</h6>
+                </div>
+                <div class="card-body">
+                    {% if current_user.is_lawyer and case.status == 'PENDING_REVIEW' %}
+                    <a href="{{ url_for('legal.lawyer_review_page', case_id=case.id) }}" class="btn btn-warning w-100 mb-2">
+                        <i class="bi bi-pencil"></i> Review Case
+                    </a>
+                    {% elif not current_user.is_lawyer and case.status == 'PENDING_APPROVAL' %}
+                    <a href="{{ url_for('legal.client_approval_page', case_id=case.id) }}" class="btn btn-success w-100 mb-2">
+                        <i class="bi bi-check-circle"></i> Approve Document
+                    </a>
+                    {% elif case.status == 'COMPLETE' %}
+                    <div class="alert alert-success p-2 small mb-0">
+                        <i class="bi bi-check-circle"></i> Case completed successfully
+                    </div>
+                    {% else %}
+                    <p class="small text-muted mb-0">No actions available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

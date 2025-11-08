@@ -1,0 +1,44 @@
+[
+    {
+        "id": "WY_DAO_LLC",
+        "name": "Wyoming DAO LLC",
+        "price_usdc": "1000.00",
+        "template_file": "wy_dao_llc.txt",
+        "recurring_fee_usdc": "300.00",
+        "required_fields": [
+            "entity_name",
+            "registered_agent_name",
+            "registered_agent_address",
+            "smart_contract_identifier",
+            "management_statement"
+        ],
+        "description": "Formation of a Wyoming Decentralized Autonomous Organization (DAO) LLC with on-chain governance"
+    },
+    {
+        "id": "DE_LLC",
+        "name": "Delaware LLC",
+        "price_usdc": "150.00",
+        "template_file": "de_llc.txt",
+        "recurring_fee_usdc": "300.00",
+        "required_fields": [
+            "entity_name",
+            "registered_agent_name",
+            "registered_agent_address",
+            "authorized_person_name"
+        ],
+        "description": "Formation of a Delaware Limited Liability Company"
+    },
+    {
+        "id": "UCC1_FILING",
+        "name": "UCC-1 Secured Transaction",
+        "price_usdc": "100.00",
+        "template_file": "ucc1_filing.txt",
+        "recurring_fee_usdc": "0.00",
+        "required_fields": [
+            "debtor_name",
+            "secured_party_name",
+            "collateral_description"
+        ],
+        "description": "UCC-1 Financing Statement for secured transactions"
+    }
+]

@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+
+{% block title %}Order Legal Service{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4"><i class="bi bi-file-earmark-plus"></i> Order a New Legal Service</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('legal.submit_order_form') }}">
+                        <!-- Service Selection -->
+                        <div class="mb-4">
+                            <label for="service_id" class="form-label fw-bold">Select Legal Service</label>
+                            <select class="form-select" id="service_id" name="service_id" required onchange="updateFormFields()">
+                                <option value="">-- Choose a service --</option>
+                                {% for service in services %}
+                                <option value="{{ service.id }}" data-price="{{ service.price_usdc }}" data-recurring="{{ service.recurring_fee_usdc }}">
+                                    {{ service.name }} - ${{ service.price_usdc }} USDC
+                                    {% if service.recurring_fee_usdc != "0.00" %}(+ ${{ service.recurring_fee_usdc }}/year){% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="form-text text-muted" id="service-description"></small>
+                        </div>
+
+                        <!-- Common Fields -->
+                        <div id="common-fields">
+                            <div class="mb-3" id="field-entity-name">
+                                <label for="entity_name" class="form-label">Entity Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="entity_name" name="entity_name"
+                                       placeholder="e.g., DeFi Collective DAO LLC">
+                                <small class="form-text text-muted">Legal name of the entity to be formed</small>
+                            </div>
+                        </div>
+
+                        <!-- Wyoming DAO LLC Fields -->
+                        <div id="wy-dao-fields" style="display:none;">
+                            <h5 class="mt-4 mb-3">Wyoming DAO LLC Details</h5>
+
+                            <div class="mb-3">
+                                <label for="smart_contract_identifier" class="form-label">Smart Contract Address <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="smart_contract_identifier" name="smart_contract_identifier"
+                                       placeholder="0x...">
+                                <small class="form-text text-muted">Public identifier of the DAO's smart contract</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="registered_agent_name" class="form-label">Registered Agent Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="registered_agent_name" name="registered_agent_name"
+                                       placeholder="Wyoming Registered Agent Services">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="registered_agent_address" class="form-label">Registered Agent Address <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="registered_agent_address" name="registered_agent_address"
+                                       placeholder="123 Capitol Ave, Cheyenne, WY 82001">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="management_statement" class="form-label">Management Statement <span class="text-danger">*</span></label>
+                                <select class="form-select" id="management_statement" name="management_statement">
+                                    <option value="This DAO is member-managed pursuant to the Operating Agreement.">Member-Managed</option>
+                                    <option value="This DAO is algorithmically managed via smart contract governance.">Algorithmically Managed</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Delaware LLC Fields -->
+                        <div id="de-llc-fields" style="display:none;">
+                            <h5 class="mt-4 mb-3">Delaware LLC Details</h5>
+
+                            <div class="mb-3">
+                                <label for="de_registered_agent_name" class="form-label">Registered Agent Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="de_registered_agent_name" name="registered_agent_name"
+                                       placeholder="Delaware Registered Agent">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="de_registered_agent_address" class="form-label">Registered Agent Address <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="de_registered_agent_address" name="registered_agent_address"
+                                       placeholder="1234 Market St, Wilmington, DE 19801">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="authorized_person_name" class="form-label">Authorized Person Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="authorized_person_name" name="authorized_person_name"
+                                       placeholder="John Doe">
+                                <small class="form-text text-muted">Person authorized to sign formation documents</small>
+                            </div>
+                        </div>
+
+                        <!-- UCC-1 Fields -->
+                        <div id="ucc-fields" style="display:none;">
+                            <h5 class="mt-4 mb-3">UCC-1 Filing Details</h5>
+
+                            <div class="mb-3">
+                                <label for="debtor_name" class="form-label">Debtor Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="debtor_name" name="debtor_name"
+                                       placeholder="Full legal name of debtor">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="secured_party_name" class="form-label">Secured Party Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="secured_party_name" name="secured_party_name"
+                                       placeholder="Full legal name of creditor">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="collateral_description" class="form-label">Collateral Description <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="collateral_description" name="collateral_description" rows="3"
+                                          placeholder="Detailed description of collateral"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-arrow-right-circle"></i> Proceed to Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Selected Service:</strong> <span id="summary-service">None</span></p>
+                    <p><strong>One-Time Fee:</strong> <span id="summary-price">$0.00</span> USDC</p>
+                    <p><strong>Annual Fee:</strong> <span id="summary-recurring">$0.00</span> USDC</p>
+                    <hr>
+                    <p class="mb-0"><strong>Total Due Now:</strong> <span id="summary-total" class="h4 text-primary">$0.00</span> USDC</p>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6><i class="bi bi-shield-check"></i> Why Agent-Ledger?</h6>
+                    <ul class="small">
+                        <li>✅ Gasless USDC payments</li>
+                        <li>✅ Instant settlement on Arc</li>
+                        <li>✅ AI-assisted document generation</li>
+                        <li>✅ Ethically compliant (no volatility)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateFormFields() {
+    const select = document.getElementById('service_id');
+    const serviceId = select.value;
+    const option = select.options[select.selectedIndex];
+
+    // Hide all service-specific fields
+    document.getElementById('wy-dao-fields').style.display = 'none';
+    document.getElementById('de-llc-fields').style.display = 'none';
+    document.getElementById('ucc-fields').style.display = 'none';
+
+    // Show relevant fields
+    if (serviceId === 'WY_DAO_LLC') {
+        document.getElementById('wy-dao-fields').style.display = 'block';
+        document.getElementById('field-entity-name').style.display = 'block';
+    } else if (serviceId === 'DE_LLC') {
+        document.getElementById('de-llc-fields').style.display = 'block';
+        document.getElementById('field-entity-name').style.display = 'block';
+    } else if (serviceId === 'UCC1_FILING') {
+        document.getElementById('ucc-fields').style.display = 'block';
+        document.getElementById('field-entity-name').style.display = 'none';
+    }
+
+    // Update summary
+    if (serviceId) {
+        const price = option.getAttribute('data-price');
+        const recurring = option.getAttribute('data-recurring');
+        document.getElementById('summary-service').textContent = option.text.split(' - ')[0];
+        document.getElementById('summary-price').textContent = `$${price}`;
+        document.getElementById('summary-recurring').textContent = `$${recurring}`;
+        document.getElementById('summary-total').textContent = `$${price}`;
+    }
+}
+</script>
+{% endblock %}

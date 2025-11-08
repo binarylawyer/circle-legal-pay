@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+
+{% block title %}Final Approval - Case #{{ case.id }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">
+        <i class="bi bi-file-earmark-text"></i> Your Document is Ready
+        <span class="badge bg-info">Pending Your Approval</span>
+    </h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-check-circle"></i> Case Approved by Lawyer</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Good news!</strong> Our legal team has reviewed and approved your request.
+                        Your document has been generated and is ready for your final review.
+                    </p>
+
+                    {% if case.lawyer_memo %}
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-chat-left-quote"></i> Lawyer's Note:</strong><br>
+                        {{ case.lawyer_memo }}
+                    </div>
+                    {% endif %}
+
+                    <table class="table">
+                        <tr>
+                            <th>Case ID:</th>
+                            <td>#{{ case.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Service:</th>
+                            <td>{{ case.service_id.replace('_', ' ').title() }}</td>
+                        </tr>
+                        <tr>
+                            <th>Reviewed On:</th>
+                            <td>{{ case.reviewed_at.strftime('%Y-%m-%d %H:%M') if case.reviewed_at else 'N/A' }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-pdf"></i> Generated Document</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Your legal document has been securely stored in your client locker:
+                    </p>
+
+                    <div class="alert alert-success">
+                        <i class="bi bi-folder-check"></i>
+                        <strong>Document Location:</strong><br>
+                        <code>{{ case.document_url or case.generated_document_path }}</code>
+                    </div>
+
+                    {% if case.generated_document_path %}
+                    <p class="small">
+                        <i class="bi bi-info-circle"></i>
+                        In production, this would be accessible via Microsoft SharePoint with granular permissions.
+                        For this demo, the document is stored locally.
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-hand-thumbs-up"></i> Final Approval</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        By clicking "Approve & Complete", you confirm that:
+                    </p>
+                    <ul>
+                        <li>You have reviewed the generated document</li>
+                        <li>The document meets your requirements</li>
+                        <li>You authorize the release of funds from escrow to the law firm</li>
+                        {% if case.recurring_fee_usdc != "0.00" %}
+                        <li>You authorize annual recurring fees of ${{ case.recurring_fee_usdc }} USDC</li>
+                        {% endif %}
+                    </ul>
+
+                    <form method="POST" action="{{ url_for('legal.client_submit_approval', case_id=case.id) }}">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Approve & Complete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-cash-stack"></i> Payment Summary</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm mb-0">
+                        <tr>
+                            <th>Service Fee:</th>
+                            <td class="text-end">${{ case.total_price_usdc }}</td>
+                        </tr>
+                        {% if case.recurring_fee_usdc != "0.00" %}
+                        <tr>
+                            <th>Annual Fee:</th>
+                            <td class="text-end">${{ case.recurring_fee_usdc }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr class="table-active">
+                            <th>Status:</th>
+                            <td class="text-end">
+                                <span class="badge bg-warning">In Escrow</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-clock-history"></i> What Happens Next?</h6>
+                </div>
+                <div class="card-body">
+                    <ol class="small">
+                        <li>Funds released from escrow to law firm (on Arc)</li>
+                        <li>Document permissions unlocked</li>
+                        {% if case.recurring_fee_usdc != "0.00" %}
+                        <li>Annual fee payment scheduled</li>
+                        {% endif %}
+                        <li>Case marked as complete</li>
+                        <li>You receive confirmation email</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
